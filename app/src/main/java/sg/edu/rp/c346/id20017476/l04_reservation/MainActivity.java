@@ -10,6 +10,9 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
+
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
     Button btnSubmit, btnReset;
@@ -18,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     TimePicker tp;
     DatePicker dp;
     CheckBox cbSmoke;
+
 
 
     @Override
@@ -41,24 +45,42 @@ public class MainActivity extends AppCompatActivity {
         tp.setCurrentMinute(30);
         dp.updateDate(2021, 05,01);
 
+       tp.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+           @Override
+           public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+               if (hourOfDay <8){
+                   tp.setCurrentHour(8);
+               } else if(hourOfDay >20 ){
+                   tp.setCurrentHour(20);
+               }
+           }
+       });
 
+        dp.setMinDate(System.currentTimeMillis());
 
 
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tvShowName.setText("Hi "+ etName.getText()+"! Thank you for booking a reservation with us.");
+                String check = "";
+                if(!etGrp.getText().toString().equals(check) && !etNum.getText().toString().equals(check)&& !etName.getText().toString().equals(check)){
+                    tvShowName.setText("Hi "+ etName.getText()+"! Thank you for booking a reservation with us.");
 
-                if(cbSmoke.isChecked()){
-                  String message = "It will be on "+dp.getDayOfMonth() +"/"+(dp.getMonth()+1)+"/"+dp.getYear()+ ", at "+tp.getCurrentHour()+" : "+String.format("%02d",tp.getCurrentMinute())
-                          +", group of "+etGrp.getText()+". Do note that it is a non-smoking area.";
-                    tvDetail.setText(message);
+                    if(cbSmoke.isChecked()){
+                        String message = "It will be on "+dp.getDayOfMonth() +"/"+(dp.getMonth()+1)+"/"+dp.getYear()+ ", at "+tp.getCurrentHour()+" : "+String.format("%02d",tp.getCurrentMinute())
+                                +", group of "+etGrp.getText()+". Do note that it is a non-smoking area.";
+                        tvDetail.setText(message);
+                    }else{
+                        String message = "It will be on "+dp.getDayOfMonth() +"/"+(dp.getMonth()+1)+"/"+dp.getYear()+ ", at "+tp.getCurrentHour()+" : "+String.format("%02d",tp.getCurrentMinute())
+                                +", group of "+etGrp.getText()+". Do note that it is a smoking area.";
+                        tvDetail.setText(message);
+                    }
+                    tvContact.setText("We will be contacting you via "+etNum.getText()+" shorty after we updated your reservation with us. We hope you have a pleasant day ahead!");
+
                 }else{
-                   String message = "It will be on "+dp.getDayOfMonth() +"/"+(dp.getMonth()+1)+"/"+dp.getYear()+ ", at "+tp.getCurrentHour()+" : "+String.format("%02d",tp.getCurrentMinute())
-                           +", group of "+etGrp.getText()+". Do note that it is a smoking area.";
-                    tvDetail.setText(message);
+                    Toast.makeText(MainActivity.this, "PLease fill in all fields", Toast.LENGTH_LONG).show();
                 }
-                tvContact.setText("We will be contacting you via "+etNum.getText()+" shorty after we updated your reservation with us. We hope you have a pleasant day ahead!");
+
 
 
             }
